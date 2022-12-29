@@ -1,0 +1,23 @@
+{
+  "name": "calculator",
+  "version": "1.0.0",
+  "description": "The Odin Project Calculator",
+  "main": "script.js",
+  "type": "module",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jessna96/calculator.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/jessna96/calculator/issues"
+  },
+  "homepage": "https://github.com/jessna96/calculator#readme",
+  "dependencies": {
+    "ramda": "^0.28.0"
+  }
+}
