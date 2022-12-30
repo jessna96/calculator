@@ -9,34 +9,96 @@
 #container {
     margin: 0 auto;
     display: flex;
+    font-family: sans-serif;
 }
 
 #container div {
-    border: 1px solid darkred;
+    /*border: 1px solid darkred;*/
+}
+
+button {
+    border: 0;
+    cursor: pointer;
+    font-family: inherit;
 }
 
 .calc_body {
     margin: 0 auto;
     padding: 20px;
-    width: 300px;
+    width: 280px;
+    height: 450px;
     display: flex;
     flex-direction: column;
     gap: 15px;
+    background-color: #1C1C1C;
+    border-radius: 25px;
 }
 
 .calc_display {
+    flex: 1;
     padding: 0.5em;
     text-align: right;
+    display: flex;
+    align-items: center;
+    justify-content: end;
+    font-size: 24px;
+    color: white;
 }
 
 .calc_button_container {
+    flex: 4;
     display: flex;
-    flex-wrap: wrap;
-    gap: 5px;
+    align-items: center;
+}
+
+.btn_nrs_extras {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.btn_operators {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.btn_nrs {
+    display: flex;
+    flex-wrap: wrap-reverse;
+}
+
+.btn_extras {
+    display: flex;
+}
+
+.btn_numbers.calc_btn {
+    background-color: #505050;
+    color: white;
+}
+
+.btn_extras.calc_btn {
+    background-color: #D4D4D2;
+    color: black;
+}
+
+.btn_operator.calc_btn {
+    background-color: #FF9500;
+    color: white;
 }
 
 .calc_btn {
-    flex: 1 1 33%;
+    width: 55px;
+    aspect-ratio: 1;
     text-align: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 100%;
+
+}
+
+.calc_btn_content {
+    font-size: 24px;
 }
 
