@@ -176,12 +176,6 @@ const calculatorButtons = [
         onClick: onclickEqual,
     },
     {
-        content: '',
-        id: 'btn_',
-        class: 'extras',
-        onClick: always,
-    },
-    {
         content: 'C',
         id: 'btn_C',
         class: 'extras',
@@ -193,11 +187,17 @@ const calculatorButtons = [
         class: 'extras',
         onClick: always,
     },
+    {
+        content: '',
+        id: 'btn_',
+        class: 'extras',
+        onClick: always,
+    },
 ]
 
-const calcButtonOperators = calculatorButtons.filter(item => item.class === 'operator');
-const calcButtonNumbers = calculatorButtons.filter(item => item.class === 'number');
-const calcButtonExtras = calculatorButtons.filter(item => item.class === 'extras');
+const calcButtonOperators = calculatorButtons.filter(item => item.class.includes('operator'));
+const calcButtonNumbers = calculatorButtons.filter(item => item.class.includes('number'));
+const calcButtonExtras = calculatorButtons.filter(item => item.class.includes('extras'));
 
 const calc = (operator, nr1, nr2) => operatorToFunction[operator](nr1, nr2);
 

@@ -87,17 +87,18 @@ button {
 }
 
 .calc_btn {
-    width: 55px;
+    width: 50px;
     aspect-ratio: 1;
     text-align: center;
     display: flex;
     justify-content: center;
     align-items: center;
     border-radius: 100%;
-
+    margin: 2.5px;
 }
 
 .calc_btn_content {
     font-size: 24px;
 }
+
 
