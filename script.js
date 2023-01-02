@@ -16,25 +16,29 @@ const calcState = {
     result: null
 };
 
-const calcStateToDisplayText = () => `${calcState.result ?? ((calcState.secondNr ?? calcState.firstNr) ?? '')}`;
+const calcStateToDisplayText = () => `${calcState.result ?? ((calcState.secondNr ?? calcState.firstNr) ?? '0')}`;
 
 const onclickNumber = (symbol) => {
-    calcState.result = null;
-    !calcState.operator ?
-        (calcState.firstNr ? calcState.firstNr += symbol : calcState.firstNr = symbol) :
-        (calcState.secondNr ? calcState.secondNr += symbol : calcState.secondNr = symbol);
-    renderDisplay();
+    return () => {
+        calcState.result = null;
+        !calcState.operator ?
+            (calcState.firstNr ? calcState.firstNr += symbol : calcState.firstNr = symbol) :
+            (calcState.secondNr ? calcState.secondNr += symbol : calcState.secondNr = symbol);
+        renderDisplay();
+    }
 }
 
 
 const onclickOperator = (symbol) => {
-    if (clickableCondOperator()) {
-        if (calcState.result) {
-            calcState.firstNr = calcState.result;
+    return () => {
+        if (clickableCondOperator()) {
+            if (calcState.result) {
+                calcState.firstNr = calcState.result;
+            }
+            calcState.operator = symbol;
+            calcState.result = null;
+            renderDisplay();
         }
-        calcState.operator = symbol;
-        calcState.result = null;
-        renderDisplay();
     }
 }
 
@@ -43,13 +47,15 @@ const clickableCondOperator = () => {
 }
 
 const onclickEqual = () => {
-    if (clickableCondEqual()) {
-        calcState.result = calc(calcState.operator, calcState.firstNr, calcState.secondNr);
+    return () => {
+        if (clickableCondEqual()) {
+            calcState.result = calc(calcState.operator, calcState.firstNr, calcState.secondNr);
+        }
+        calcState.firstNr = null;
+        calcState.secondNr = null;
+        calcState.operator = null;
+        renderDisplay();
     }
-    calcState.firstNr = null;
-    calcState.secondNr = null;
-    calcState.operator = null;
-    renderDisplay();
 }
 
 const clickableCondEqual = () => {
@@ -57,11 +63,13 @@ const clickableCondEqual = () => {
 }
 
 const onclickClear = () => {
-    calcState.firstNr = null;
-    calcState.secondNr = null;
-    calcState.operator = null;
-    calcState.result = null;
-    renderDisplay();
+    return () => {
+        calcState.firstNr = null;
+        calcState.secondNr = null;
+        calcState.operator = null;
+        calcState.result = null;
+        renderDisplay();
+    }
 }
 
 const calculatorButtons = [
@@ -160,7 +168,7 @@ const calculatorButtons = [
         id: 'btn_/',
         class: 'operator',
         onClick: onclickOperator,
-        
+
     },
     {
         content: '=',
@@ -200,14 +208,16 @@ const render = () => {
     document.querySelector('#app').innerHTML = getHTML();
     const buttons = document.querySelectorAll('.calc_btn');
     buttons.forEach((btn) => {
-        btn.addEventListener('click', (event) => {
-            const selectedBtn = calculatorButtons.find((item) => item.id === btn.id);
-            selectedBtn.onClick(selectedBtn.content);
-        });
+        const selectedBtn = calculatorButtons.find((item) => item.id === btn.id);
+        btn.addEventListener('click', selectedBtn.onClick(selectedBtn.content));
+        // btn.addEventListener('click', (event) => {
+        //     const selectedBtn = calculatorButtons.find((item) => item.id === btn.id);
+        //     selectedBtn.onClick(selectedBtn.content);
+        // });
     });
 }
 
-const calcDisplay = () => `<div class="calc_display"><div class="calc_display_result"></div></div>`;
+const calcDisplay = () => `<div class="calc_display"><div class="calc_display_result">0</div></div>`;
 const singleBtnHtml = (content, btnClass) => `<button id="btn_${content}" class="calc_btn ${btnClass}"><div class="calc_btn_content">${content}</div></button>`;
 
 const calcButtons2 = () => {
