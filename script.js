@@ -1,52 +1,223 @@
 import {add, subtract, multiply, divide} from "./node_modules/ramda/es/index.js";
 import {range, map} from "./node_modules/ramda/es/index.js";
-
-const calcButtonContents = [['C', ' ', ' ', '/'], ['7', '8', '9', 'x'], ['4', '5', '6', '-'], ['1', '2', '3', '+'], [' ', '0', ' ', '=']];
-
-const calcButtonOperators = ['/', 'x', '-', '+', '='];
-const calcButtonNumbers = [' ', '0', ' ', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
-const calcButtonExtras = ['C', ' ', ' '];
+import {always} from "./node_modules/ramda/es/index.js";
 
 const operatorToFunction = {
     '+': add,
     '-': subtract,
-    '*': multiply,
+    'x': multiply,
     '/': divide
 }
 
-const calcState = 0;
+const calcState = {
+    firstNr: null,
+    secondNr: null,
+    operator: null,
+    result: null
+};
+
+const calcStateToDisplayText = () => `${calcState.result ?? ((calcState.secondNr ?? calcState.firstNr) ?? '')}`;
+
+const onclickNumber = (symbol) => {
+    calcState.result = null;
+    !calcState.operator ?
+        (calcState.firstNr ? calcState.firstNr += symbol : calcState.firstNr = symbol) :
+        (calcState.secondNr ? calcState.secondNr += symbol : calcState.secondNr = symbol);
+    renderDisplay();
+}
+
+
+const onclickOperator = (symbol) => {
+    if (clickableCondOperator()) {
+        if (calcState.result) {
+            calcState.firstNr = calcState.result;
+        }
+        calcState.operator = symbol;
+        calcState.result = null;
+        renderDisplay();
+    }
+}
+
+const clickableCondOperator = () => {
+    return (calcState.firstNr || calcState.result) && !calcState.operator;
+}
+
+const onclickEqual = () => {
+    if (clickableCondEqual()) {
+        calcState.result = calc(calcState.operator, calcState.firstNr, calcState.secondNr);
+    }
+    calcState.firstNr = null;
+    calcState.secondNr = null;
+    calcState.operator = null;
+    renderDisplay();
+}
+
+const clickableCondEqual = () => {
+    return calcState.firstNr !== '' && calcState.secondNr !== '';
+}
+
+const onclickClear = () => {
+    calcState.firstNr = null;
+    calcState.secondNr = null;
+    calcState.operator = null;
+    calcState.result = null;
+    renderDisplay();
+}
+
+const calculatorButtons = [
+    {
+        content: '',
+        id: 'btn_',
+        class: 'number',
+        onClick: always,
+    },
+    {
+        content: '0',
+        id: 'btn_0',
+        class: 'number',
+        onClick: onclickNumber,
+    },
+    {
+        content: '',
+        id: 'btn_',
+        class: 'number',
+        onClick: always,
+    },
+    {
+        content: '1',
+        id: 'btn_1',
+        class: 'number',
+        onClick: onclickNumber,
+    },
+    {
+        content: '2',
+        id: 'btn_2',
+        class: 'number',
+        onClick: onclickNumber,
+    },
+    {
+        content: '3',
+        id: 'btn_3',
+        class: 'number',
+        onClick: onclickNumber,
+    },
+    {
+        content: '4',
+        id: 'btn_4',
+        class: 'number',
+        onClick: onclickNumber,
+    },
+    {
+        content: '5',
+        id: 'btn_5',
+        class: 'number',
+        onClick: onclickNumber,
+    },
+    {
+        content: '6',
+        id: 'btn_6',
+        class: 'number',
+        onClick: onclickNumber,
+    },
+    {
+        content: '7',
+        id: 'btn_7',
+        class: 'number',
+        onClick: onclickNumber,
+    },
+    {
+        content: '8',
+        id: 'btn_8',
+        class: 'number',
+        onClick: onclickNumber,
+    },
+    {
+        content: '9',
+        id: 'btn_9',
+        class: 'number',
+        onClick: onclickNumber,
+    },
+    {
+        content: '+',
+        id: 'btn_+',
+        class: 'operator',
+        onClick: onclickOperator,
+    },
+    {
+        content: '-',
+        id: 'btn_-',
+        class: 'operator',
+        onClick: onclickOperator,
+    },
+    {
+        content: 'x',
+        id: 'btn_x',
+        class: 'operator',
+        onClick: onclickOperator,
+    },
+    {
+        content: '/',
+        id: 'btn_/',
+        class: 'operator',
+        onClick: onclickOperator,
+        
+    },
+    {
+        content: '=',
+        id: 'btn_=',
+        class: 'operator',
+        onClick: onclickEqual,
+    },
+    {
+        content: '',
+        id: 'btn_',
+        class: 'extras',
+        onClick: always,
+    },
+    {
+        content: 'C',
+        id: 'btn_C',
+        class: 'extras',
+        onClick: onclickClear,
+    },
+    {
+        content: '',
+        id: 'btn_',
+        class: 'extras',
+        onClick: always,
+    },
+]
+
+const calcButtonOperators = calculatorButtons.filter(item => item.class === 'operator');
+const calcButtonNumbers = calculatorButtons.filter(item => item.class === 'number');
+const calcButtonExtras = calculatorButtons.filter(item => item.class === 'extras');
 
 const calc = (operator, nr1, nr2) => operatorToFunction[operator](nr1, nr2);
 
-const renderDisplay = (input) => {
-    document.querySelector('.calc_display').innerHTML = input;
-}
+const renderDisplay = () => document.querySelector('.calc_display').innerHTML = calcStateToDisplayText();
 
 const render = () => {
     document.querySelector('#app').innerHTML = getHTML();
+    const buttons = document.querySelectorAll('.calc_btn');
+    buttons.forEach((btn) => {
+        btn.addEventListener('click', (event) => {
+            const selectedBtn = calculatorButtons.find((item) => item.id === btn.id);
+            selectedBtn.onClick(selectedBtn.content);
+        });
+    });
 }
 
-const calcDisplay = () => `<div class="calc_display"><div class="calc_display_result">result</div></div>`;
-const calcButtons = () => {
-    const buttonList = map((item) => {
-        const content = item === 10 ? 'clear' :
-            (item === 11 ? 0 :
-                (item === 12 ? '=' : item));
-        return `<div class="calc_btn"><div class="calc_btn_content">${content}</div></div>`
-    }, range(1, 13));
-    return `<div class="calc_button_container">${buttonList.join('')}</div>`;
-}
-
-const singleBtnHtml = (content, btnClass) => `<button class="calc_btn ${btnClass}"><div class="calc_btn_content">${content}</div></button>`;
+const calcDisplay = () => `<div class="calc_display"><div class="calc_display_result"></div></div>`;
+const singleBtnHtml = (content, btnClass) => `<button id="btn_${content}" class="calc_btn ${btnClass}"><div class="calc_btn_content">${content}</div></button>`;
 
 const calcButtons2 = () => {
-    const buttonList = calcButtonContents.map((row) =>
+    const buttonList = calculatorButtons.map((row) =>
         row.map((singleBtnCont) => singleBtnHtml(singleBtnCont)).join(''));
     return `<div class="calc_button_container">${buttonList.join('')}</div>`;
 }
 
 const btnListToHtml = (btnList, btnClass) => {
-    return btnList.map((btnContent) => `${singleBtnHtml(btnContent, btnClass)}`).join('');
+    return btnList.map((btnContent) => `${singleBtnHtml(btnContent.content, btnClass, btnContent.onClick)}`).join('');
 }
 
 const btnOperators = () => {
@@ -62,6 +233,10 @@ const btnNrsExtras = () => {
 
 const calcButtons3 = () => `<div class="calc_button_container">${btnNrsExtras()}${btnOperators()}</div>`;
 
+const calcButtons4 = () => {
+    const buttonList = calculatorButtons.map((btn) => singleBtnHtml(btn.content, btn.class));
+    return `<div class="calc_button_container">${buttonList.join('')}</div>`;
+}
 
 const calcBody = () => `<div class="calc_body">
             ${calcDisplay()}
