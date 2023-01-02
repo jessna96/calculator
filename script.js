@@ -1,5 +1,4 @@
 import {add, subtract, multiply, divide} from "./node_modules/ramda/es/index.js";
-import {range, map} from "./node_modules/ramda/es/index.js";
 import {always} from "./node_modules/ramda/es/index.js";
 
 const operatorToFunction = {
@@ -220,12 +219,6 @@ const render = () => {
 const calcDisplay = () => `<div class="calc_display"><div class="calc_display_result">0</div></div>`;
 const singleBtnHtml = (content, btnClass) => `<button id="btn_${content}" class="calc_btn ${btnClass}"><div class="calc_btn_content">${content}</div></button>`;
 
-const calcButtons2 = () => {
-    const buttonList = calculatorButtons.map((row) =>
-        row.map((singleBtnCont) => singleBtnHtml(singleBtnCont)).join(''));
-    return `<div class="calc_button_container">${buttonList.join('')}</div>`;
-}
-
 const btnListToHtml = (btnList, btnClass) => {
     return btnList.map((btnContent) => `${singleBtnHtml(btnContent.content, btnClass, btnContent.onClick)}`).join('');
 }
@@ -241,16 +234,11 @@ const btnNrsExtras = () => {
             </div>`;
 }
 
-const calcButtons3 = () => `<div class="calc_button_container">${btnNrsExtras()}${btnOperators()}</div>`;
-
-const calcButtons4 = () => {
-    const buttonList = calculatorButtons.map((btn) => singleBtnHtml(btn.content, btn.class));
-    return `<div class="calc_button_container">${buttonList.join('')}</div>`;
-}
+const calcButtons = () => `<div class="calc_button_container">${btnNrsExtras()}${btnOperators()}</div>`;
 
 const calcBody = () => `<div class="calc_body">
             ${calcDisplay()}
-            ${calcButtons3()}
+            ${calcButtons()}
             </div`;
 
 const getHTML = () => {
