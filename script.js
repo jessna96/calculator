@@ -48,7 +48,8 @@ const clickableCondOperator = () => {
 const onclickEqual = () => {
     return () => {
         if (clickableCondEqual()) {
-            calcState.result = calc(calcState.operator, calcState.firstNr, calcState.secondNr);
+            const result = calc(calcState.operator, calcState.firstNr, calcState.secondNr);
+            calcState.result = result % 1 !== 0 ? result.toFixed(5) : result;
         }
         calcState.firstNr = null;
         calcState.secondNr = null;
