@@ -1,5 +1,5 @@
 import {add, subtract, multiply, divide} from "./node_modules/ramda/es/index.js";
-import {always} from "./node_modules/ramda/es/index.js";
+import {always, concat, map, reduce} from "./node_modules/ramda/es/index.js";
 
 const operatorToFunction = {
     '+': add,
@@ -17,16 +17,20 @@ const calcState = {
 
 const calcStateToDisplayText = () => `${calcState.result ?? ((calcState.secondNr ?? calcState.firstNr) ?? '0')}`;
 
-const onclickNumber = (symbol) => {
+const onclickNumber = (symbol) => { //getOnClickNrFn
     return () => {
         calcState.result = null;
-        !calcState.operator ?
-            (calcState.firstNr ? calcState.firstNr += symbol : calcState.firstNr = symbol) :
-            (calcState.secondNr ? calcState.secondNr += symbol : calcState.secondNr = symbol);
+        if (calcState.operator) {
+            calcState.secondNr = concatNullableStrings(calcState.secondNr, symbol);
+        } else {
+            calcState.firstNr = concatNullableStrings(calcState.firstNr, symbol);
+        }
         renderDisplay();
     }
 }
 
+const orEmptyString = (str) => str ?? ``;
+const concatNullableStrings = (...strs) => reduce(concat, '', map(orEmptyString, strs));
 
 const onclickOperator = (symbol) => {
     return () => {
