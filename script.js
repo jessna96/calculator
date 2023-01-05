@@ -8,29 +8,70 @@ const operatorToFunction = {
     '/': divide
 }
 
-const calcState = {
+let calcState = {
     firstNr: null,
     secondNr: null,
     operator: null,
     result: null
 };
 
-const calcStateToDisplayText = () => `${calcState.result ?? ((calcState.secondNr ?? calcState.firstNr) ?? '0')}`;
+const state_ = {
+    calcState
+}
+
+console.log(state_);
+
+const handler = {
+    set(target, property, value, receiver) {
+        console.log('hi');
+        target[property] = value;
+        renderDisplay();
+        return true;
+    }
+}
+
+const state = new Proxy(state_, handler);
+
+const state2 = {
+    calcState_: calcState,
+    get calcState() {
+        return this.calcState_;
+    },
+    set calcState(value) {
+        this.calcState_ = value;
+        renderDisplay();
+    }
+}
+
+const calcStateToDisplayText = (calcState) => `${calcState.result ?? ((calcState.secondNr || calcState.firstNr) ?? '0')}`;
 
 const onclickNumber = (symbol) => { //getOnClickNrFn
     return () => {
-        calcState.result = null;
-        if (calcState.operator) {
-            calcState.secondNr = concatNullableStrings(calcState.secondNr, symbol);
-        } else {
-            calcState.firstNr = concatNullableStrings(calcState.firstNr, symbol);
-        }
-        renderDisplay();
+        state2.calcState = addNumber(state2.calcState, symbol);
+        // renderDisplay();
     }
 }
 
 const orEmptyString = (str) => str ?? ``;
 const concatNullableStrings = (...strs) => reduce(concat, '', map(orEmptyString, strs));
+
+// const addNumber = (calcState, symbol) => {
+//     const newCalcState = {...calcState};
+//     newCalcState.result = null;
+//     if (calcState.operator) {
+//         newCalcState.secondNr = concatNullableStrings(calcState.secondNr, symbol);
+//     } else {
+//         newCalcState.firstNr = concatNullableStrings(calcState.firstNr, symbol);
+//     }
+//     return newCalcState;
+// }
+
+const addNumber = (calcState, symbol) => ({
+    ...calcState,
+    result: null,
+    secondNr: concatNullableStrings(calcState.secondNr, calcState.operator ? symbol : null),
+    firstNr: concatNullableStrings(calcState.firstNr, !calcState.operator ? symbol : null),
+})
 
 const onclickOperator = (symbol) => {
     return () => {
@@ -206,7 +247,11 @@ const calcButtonExtras = calculatorButtons.filter(item => item.class.includes('e
 
 const calc = (operator, nr1, nr2) => operatorToFunction[operator](nr1, nr2);
 
-const renderDisplay = () => document.querySelector('.calc_display').innerHTML = calcStateToDisplayText();
+const renderDisplay = () => {
+    console.log(state.calcState);
+    console.log(calcStateToDisplayText(state.calcState));
+    document.querySelector('.calc_display').innerHTML = calcStateToDisplayText(state2.calcState);
+}
 
 const render = () => {
     document.querySelector('#app').innerHTML = getHTML();
@@ -253,3 +298,10 @@ const getHTML = () => {
 }
 
 render();
+
+function Car(tires) {
+    this.tires = tires;
+    this.drive = () => {
+        alert('test');
+    };
+}
