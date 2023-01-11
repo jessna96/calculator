@@ -16,7 +16,7 @@ let calcState = {
 };
 
 const state_ = {
-    calcState
+    calcState: calcState,
 }
 
 console.log(state_);
@@ -47,7 +47,7 @@ const calcStateToDisplayText = (calcState) => `${calcState.result ?? ((calcState
 
 const onclickNumber = (symbol) => { //getOnClickNrFn
     return () => {
-        state2.calcState = addNumber(state2.calcState, symbol);
+        state.calcState = addNumber(state.calcState, symbol);
         // renderDisplay();
     }
 }
@@ -250,7 +250,7 @@ const calc = (operator, nr1, nr2) => operatorToFunction[operator](nr1, nr2);
 const renderDisplay = () => {
     console.log(state.calcState);
     console.log(calcStateToDisplayText(state.calcState));
-    document.querySelector('.calc_display').innerHTML = calcStateToDisplayText(state2.calcState);
+    document.querySelector('.calc_display').innerHTML = calcStateToDisplayText(state.calcState);
 }
 
 const render = () => {
